@@ -82,31 +82,51 @@ Revenue and Customer Analysis
 
 -- Top 5 customers by total revenue with rank
 
-SELECT 
+SELECT
+
     c.customer_id,
+    
     c.full_name,
+    
     SUM(o.total_amount) AS total_revenue,
+    
     RANK() OVER (ORDER BY SUM(o.total_amount) DESC) AS revenue_rank
+
 FROM customers c
+
 JOIN orders o ON c.customer_id = o.customer_id
+
 GROUP BY c.customer_id, c.full_name
+
 ORDER BY total_revenue DESC
+
 LIMIT 5;
 
 
 ## Loyalty tier
 
 SELECT 
+
     c.customer_id,
+    
     c.full_name,
+    
     COALESCE(SUM(lp.points_earned), 0) AS total_points,
+    
     CASE
+    
         WHEN COALESCE(SUM(lp.points_earned), 0) < 100 THEN 'Bronze'
+        
         WHEN COALESCE(SUM(lp.points_earned), 0) BETWEEN 100 AND 499 THEN 'Silver'
+        
         ELSE 'Gold'
+    
     END AS loyalty_tier
+
 FROM customers c
+
 LEFT JOIN loyalty_points lp ON c.customer_id = lp.customer_id
+
 GROUP BY c.customer_id, c.full_name;
 
 
